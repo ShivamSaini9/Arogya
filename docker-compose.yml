@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: eve-healthcare-postgres
+    environment:
+      POSTGRES_DB: eve_healthcare
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: eve-healthcare-app
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/eve_healthcare
+      JWT_SECRET: change-this-in-production
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: admin123
+      DB_SSL: "false"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
